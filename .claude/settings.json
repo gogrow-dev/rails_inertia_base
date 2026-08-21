@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/bin/worktree-setup",
+            "timeout": 300
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/bin/worktree-prune"
+          }
+        ]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/bin/worktree-teardown"
+          }
+        ]
+      }
+    ]
+  }
+}

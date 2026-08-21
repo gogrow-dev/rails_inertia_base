@@ -7,14 +7,14 @@ default: &default
 
 development:
   <<: *default
-  database: rails_inertia_base_development
+  database: rails_inertia_base_development<%= ENV["DATABASE_SUFFIX"] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: rails_inertia_base_test
+  database: rails_inertia_base_test<%= ENV["DATABASE_SUFFIX"] %>
 
 production:
   <<: *default

@@ -66,6 +66,9 @@ group :development, :test do
 
   # RSpec for Rails 7+
   gem "rspec-rails", "~> 8.0"
+
+  # Loads .env, which carries DATABASE_SUFFIX for per-worktree DB isolation
+  gem "dotenv-rails"
 end
 
 group :development do
