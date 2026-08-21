@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# WorktreeRemove hook: drop the per-worktree databases that bin/worktree-setup
+# created, when Claude Code removes the worktree.
+#
+# Safety model (deliberately strict — this script drops databases):
+#   1. Acts ONLY on a worktree_path under .claude/worktrees/ (no cwd fallback).
+#   2. Derives the DB names deterministically from the worktree name — it does
+#      NOT read .env, so a missing/edited .env can't redirect it at another DB.
+#   3. Every name is re-validated against worktree_db_regex immediately before
+#      dropping. The main DBs (no _wt_ suffix) cannot match and are never touched.
+#
+set -euo pipefail
+
+source "$(dirname "$0")/worktree-db-lib"
+
+input="$(cat)"
+wt_path="$(printf '%s' "$input" | jq -r '.worktree_path // empty')"
+
+# Require a genuine Claude worktree path. No fallbacks.
+[ -n "$wt_path" ] || exit 0
+case "$wt_path" in
+  */.claude/worktrees/*) ;;
+  *) exit 0 ;;
+esac
+
+slug="$(worktree_slug "$wt_path")" || exit 0
+suffix="_wt_${slug}"
+
+drop_worktree_db "${DB_PREFIX}_development${suffix}" worktree-teardown
+drop_worktree_db "${DB_PREFIX}_test${suffix}" worktree-teardown

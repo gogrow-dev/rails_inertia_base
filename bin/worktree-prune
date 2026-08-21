@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+#
+# Reports (and, with --force, drops) per-worktree databases whose worktree
+# directory no longer exists. bin/worktree-teardown only runs when Claude Code
+# itself removes a worktree — a crashed session or a manual `git worktree
+# remove` leaks the databases. This finds those orphans.
+#
+# DRY RUN BY DEFAULT: with no flag (and as the SessionStart hook) it only lists
+# what it would drop and deletes nothing. Pass --force to actually drop them,
+# so databases are never deleted by accident.
+#
+#   bin/worktree-prune            # list orphaned worktree DBs, delete nothing
+#   bin/worktree-prune --force    # drop them
+#
+# Same safety model as bin/worktree-teardown: only names matching
+# worktree_db_regex are ever dropped, and any database whose worktree directory
+# still exists on disk is kept.
+#
+set -euo pipefail
+
+source "$(dirname "$0")/worktree-db-lib"
+
+force=0
+case "${1:-}" in
+  --force|-f) force=1 ;;
+  "") ;;
+  *) echo "worktree-prune: unknown argument '$1' (usage: worktree-prune [--force])" >&2; exit 2 ;;
+esac
+
+# Resolve the main checkout from this script's location, so it works both as
+# a hook and run by hand from any directory (including inside a worktree).
+root="$(cd "$(dirname "$0")/.." && pwd)"
+case "$root" in
+  */.claude/worktrees/*) root="${root%%/.claude/worktrees/*}" ;;
+esac
+worktrees_root="$root/.claude/worktrees"
+
+# Expected DB names for every worktree that still exists on disk.
+expected=" "
+for dir in "$worktrees_root"/*/; do
+  [ -d "$dir" ] || continue
+  slug="$(worktree_slug "$dir")" || continue
+  expected="${expected}${DB_PREFIX}_development_wt_${slug} ${DB_PREFIX}_test_wt_${slug} "
+done
+
+if ! dbs="$(psql -d postgres -At -c \
+  "SELECT datname FROM pg_database WHERE datname ~ '${worktree_db_regex}'" 2>/dev/null)"; then
+  exit 0 # postgres not reachable — nothing to prune
+fi
+
+found=0
+for db in $dbs; do
+  case "$expected" in
+    *" $db "*) continue ;;
+  esac
+  found=1
+  if [ "$force" -eq 1 ]; then
+    drop_worktree_db "$db" "worktree-prune (orphaned)"
+  else
+    echo "worktree-prune: would drop orphaned $db (dry run)" >&2
+  fi
+done
+
+if [ "$found" -eq 1 ] && [ "$force" -eq 0 ]; then
+  echo "worktree-prune: re-run 'bin/worktree-prune --force' to drop the above." >&2
+fi

@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+#
+# SessionStart hook: when a Claude Code session starts inside a worktree under
+# .claude/worktrees/, give it its own dev/test databases so parallel sessions
+# don't trample each other's data. The main checkout (no DATABASE_SUFFIX) is
+# left completely untouched.
+#
+# Also runnable by hand from inside a worktree: bin/worktree-setup
+#
+# Mechanism: derive a stable suffix from the worktree name, write
+# DATABASE_SUFFIX into the worktree's .env (which dotenv-rails loads, so every
+# process in the worktree — bin/rails, bin/dev, specs — picks it up), clone the
+# main dev DB for realistic data (db:prepare seeds fresh when the clone isn't
+# possible), then run db:prepare. Idempotent: safe to re-run.
+#
+set -euo pipefail
+
+source "$(dirname "$0")/worktree-db-lib"
+
+# Reads the hook payload on stdin. Run by hand (no stdin, or a path argument)
+# it falls back to $PWD, so recovering a worktree whose hook never fired is just
+# `bin/worktree-setup` from inside it.
+if [ -n "${1:-}" ]; then
+  cwd="$1"
+elif [ -t 0 ]; then
+  cwd="$PWD"
+else
+  input="$(cat)"
+  cwd="$(printf '%s' "$input" | jq -r '.cwd // empty')"
+  [ -n "$cwd" ] || cwd="$PWD"
+fi
+
+# Only act inside a Claude worktree; main checkout falls through untouched.
+case "$cwd" in
+  */.claude/worktrees/*) ;;
+  *) exit 0 ;;
+esac
+
+slug="$(worktree_slug "$cwd")" || {
+  echo "worktree-setup: could not derive a slug from '$cwd'" >&2
+  exit 0
+}
+suffix="_wt_${slug}"
+
+env_file="$cwd/.env"
+
+# Idempotent: only add DATABASE_SUFFIX once, pinned to the top of .env.
+if [ -f "$env_file" ] && grep -q "^DATABASE_SUFFIX=" "$env_file"; then
+  echo "worktree-setup: DATABASE_SUFFIX already set in $env_file" >&2
+else
+  tmp="$(mktemp)"
+  {
+    echo "# Per-worktree DB isolation (auto-added by bin/worktree-setup)"
+    echo "DATABASE_SUFFIX=${suffix}"
+    echo ""
+    [ -f "$env_file" ] && cat "$env_file"
+  } > "$tmp"
+  mv "$tmp" "$env_file"
+  echo "worktree-setup: wrote DATABASE_SUFFIX=${suffix} to $env_file" >&2
+fi
+
+# Clone the main dev DB so the worktree starts with realistic data. Postgres
+# refuses a template copy while anything is connected to the source (e.g. the
+# main checkout's server) — in that case db:prepare below seeds fresh instead.
+dev_db="${DB_PREFIX}_development${suffix}"
+if [ -z "$(psql -d postgres -At -c "SELECT 1 FROM pg_database WHERE datname = '${dev_db}'" 2>/dev/null)" ]; then
+  if createdb -T "${DB_PREFIX}_development" "$dev_db" 2>/dev/null; then
+    echo "worktree-setup: cloned ${DB_PREFIX}_development into ${dev_db}" >&2
+    # The clone carries the main checkout's queued jobs; a throwaway worktree
+    # shouldn't replay them. Harmless if the Solid Queue tables are absent.
+    psql -d "$dev_db" -c "TRUNCATE solid_queue_jobs CASCADE" >/dev/null 2>&1 || true
+  else
+    echo "worktree-setup: clone failed (source DB in use?) — db:prepare will seed fresh" >&2
+  fi
+fi
+
+# Creates whatever is still missing (test DB, dev DB if the clone fell
+# through), runs pending migrations, and seeds (idempotent) on creation.
+echo "worktree-setup: running db:prepare for ${DB_PREFIX}_*${suffix}..." >&2
+cd "$cwd"
+if ! DATABASE_SUFFIX="$suffix" bin/rails db:prepare >&2; then
+  echo "worktree-setup: db:prepare failed — run 'DATABASE_SUFFIX=${suffix} bin/rails db:prepare' in $cwd" >&2
+fi

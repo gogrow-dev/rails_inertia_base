@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Shared helpers for the per-worktree DB hooks (worktree-setup / -teardown /
+# -prune). Sourced, not executed — keeps the DB prefix, the slug rule, and the
+# guarded drop in one place so the three scripts can never drift apart (a
+# mismatch would silently leak or, worse, target the wrong database).
+#
+# DB_PREFIX must match config/database.yml. Change it here only when copying
+# these hooks to another project.
+DB_PREFIX="rails_inertia_base"
+
+# Stable, DB-safe, collision-resistant slug for a worktree path. The normalized
+# token is lossy ("a-b" and "a_b" both become "a_b"), so we append a checksum of
+# the original name — distinct worktrees can never share a database. Echoes the
+# slug; returns 1 when nothing usable can be derived.
+worktree_slug() {
+  local name token sum
+  name="$(basename "$1")"
+  token="$(printf '%s' "$name" | tr '[:upper:]-' '[:lower:]_' | tr -cd '[:alnum:]_')"
+  [ -n "$token" ] || return 1
+  sum="$(printf '%s' "$name" | cksum | cut -d' ' -f1)"
+  printf '%s_%s' "$token" "$sum"
+}
+
+# Regex every name is validated against immediately before a drop. The main DBs
+# (no _wt_ suffix) cannot match and are never touched.
+worktree_db_regex="^${DB_PREFIX}_(development|test)_wt_[a-z0-9_]+$"
+
+# Drop one worktree DB, hard-guarded by worktree_db_regex. $2 labels the caller
+# in log lines (e.g. "worktree-teardown").
+drop_worktree_db() {
+  local db="$1" label="${2:-worktree-db}"
+
+  if ! printf '%s' "$db" | grep -Eq "$worktree_db_regex"; then
+    echo "$label: refusing to drop '$db' (not a ${DB_PREFIX} worktree DB)" >&2
+    return 0
+  fi
+
+  echo "$label: dropping $db" >&2
+  # Close any open connections first so dropdb doesn't fail.
+  psql -d postgres -c \
+    "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$db' AND pid <> pg_backend_pid();" \
+    >/dev/null 2>&1 || true
+  dropdb --if-exists "$db" >&2 || echo "$label: dropdb failed for $db" >&2
+}
