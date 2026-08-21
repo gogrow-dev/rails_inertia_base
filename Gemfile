@@ -67,6 +67,11 @@ group :development, :test do
   # RSpec for Rails 7+
   gem "rspec-rails", "~> 8.0"
 
+  # Fixtures replacement with a straightforward definition syntax
+  gem "factory_bot_rails"
+
+  gem "faker"
+
   # Loads .env, which carries DATABASE_SUFFIX for per-worktree DB isolation
   # and RAILS_SENTRY_DSN for testing Sentry locally
   gem "dotenv-rails"
@@ -84,6 +89,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "shoulda-matchers"
 end
 gem "alba"
 gem "alba-inertia"
