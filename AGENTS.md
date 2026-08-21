@@ -4,7 +4,7 @@ This file provides guidance to Coding Agents (like claude.ai/code) when working 
 
 ## Stack
 
-Rails 8.1 + Inertia.js + React 19 + TypeScript, bootstrapped from the [Inertia Rails React Starter Kit](https://github.com/inertia-rails/react-starter-kit). SQLite for all environments (plus separate cache/queue/cable databases via solid_cache / solid_queue / solid_cable). Vite (`rails_vite` + `rails-vite-plugin`) builds assets from `app/javascript`. Auth is Authentication Zero–style, hand-rolled in-app. shadcn/ui (new-york, neutral, lucide) + Tailwind v4.
+Rails 8.1 + Inertia.js + React 19 + TypeScript, bootstrapped from the [Inertia Rails React Starter Kit](https://github.com/inertia-rails/react-starter-kit). PostgreSQL, with solid_cache / solid_queue / solid_cable. Vite (`rails_vite` + `rails-vite-plugin`) builds assets from `app/javascript`. Auth is Authentication Zero–style, hand-rolled in-app. shadcn/ui (new-york, neutral, lucide) + Tailwind v4.
 
 ## Commands
 
