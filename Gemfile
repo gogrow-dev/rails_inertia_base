@@ -83,6 +83,8 @@ group :development do
 
   # Use letter_opener to preview emails in the browser in development [https://github.com/ryanb/letter_opener]
   gem "letter_opener"
+
+  gem "annotaterb", require: false
 end
 
 group :test do
