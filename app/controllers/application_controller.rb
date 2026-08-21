@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_current_request_details
   before_action :authenticate
+  before_action :set_sentry_context
 
   private
 
@@ -27,5 +28,15 @@ class ApplicationController < ActionController::Base
   def set_current_request_details
     Current.user_agent = request.user_agent
     Current.ip_address = request.ip
+  end
+
+  # Identify the user in Sentry without sending PII — the id is enough to
+  # correlate reports, and set_user({}) clears it for anonymous requests.
+  def set_sentry_context
+    if (user = Current.user)
+      Sentry.set_user(id: user.id, username: "User-#{user.id}")
+    else
+      Sentry.set_user({})
+    end
   end
 end

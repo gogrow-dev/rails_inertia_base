@@ -68,6 +68,7 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0"
 
   # Loads .env, which carries DATABASE_SUFFIX for per-worktree DB isolation
+  # and RAILS_SENTRY_DSN for testing Sentry locally
   gem "dotenv-rails"
 end
 
@@ -86,3 +87,6 @@ group :test do
 end
 gem "alba"
 gem "alba-inertia"
+
+gem "sentry-ruby", "~> 6.5"
+gem "sentry-rails", "~> 6.5"

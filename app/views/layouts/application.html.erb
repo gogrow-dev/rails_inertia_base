@@ -29,6 +29,7 @@
 
     <%= vite_tags "application.css", "inertia.tsx" %>
     <%= inertia_ssr_head %>
+    <%= Sentry.get_trace_propagation_meta.html_safe %>
   </head>
 
   <body>

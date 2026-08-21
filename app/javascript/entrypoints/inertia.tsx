@@ -3,6 +3,8 @@ import { createInertiaApp } from "@inertiajs/react"
 import { initializeTheme } from "@/hooks/use-appearance"
 import PersistentLayout from "@/layouts/persistent-layout"
 
+import "../lib/sentry"
+
 const appName = import.meta.env.VITE_APP_NAME ?? "React Starter Kit"
 
 void createInertiaApp({

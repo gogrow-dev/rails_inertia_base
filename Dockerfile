@@ -66,7 +66,11 @@ COPY . .
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN --mount=type=secret,id=VITE_SENTRY_DSN \
+  --mount=type=secret,id=VITE_APP_NAME \
+  VITE_SENTRY_DSN=$(cat /run/secrets/VITE_SENTRY_DSN) \
+  VITE_APP_NAME=$(cat /run/secrets/VITE_APP_NAME) \
+  SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 # Build SSR bundle when SSR_ENABLED=true, then discard node_modules
 ARG SSR_ENABLED
