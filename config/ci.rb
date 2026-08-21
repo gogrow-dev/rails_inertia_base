@@ -1,0 +1,26 @@
+# Run using bin/ci
+
+CI.run do
+  step "Setup", "bin/setup --skip-server"
+
+  step "Style: Ruby", "bin/rubocop"
+
+  step "JavaScript: lint", "npm run lint"
+  step "JavaScript: format", "npm run format"
+  step "JavaScript: types check", "npm run check"
+  step "JavaScript: generated types are fresh", "bin/rails typelizer:generate:refresh && git diff --exit-code -- app/javascript/routes app/javascript/types/serializers && test -z \"$(git ls-files --others --exclude-standard -- app/javascript/routes app/javascript/types/serializers)\""
+
+  step "Security: Gem audit", "bin/bundler-audit"
+  step "Security: NPM vulnerability audit", "npm audit"
+  step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
+
+  step "Tests: Rails", "bin/rails db:test:prepare spec"
+
+  # Optional: set a green GitHub commit status to unblock PR merge.
+  # Requires the `gh` CLI and `gh extension install basecamp/gh-signoff`.
+  # if success?
+  #   step "Signoff: All systems go. Ready for merge and deploy.", "gh signoff"
+  # else
+  #   failure "Signoff: CI failed. Do not merge or deploy.", "Fix the issues and try again."
+  # end
+end
