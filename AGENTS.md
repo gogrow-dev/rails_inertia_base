@@ -29,7 +29,7 @@ A missing page serializer is **silently ignored** — the page renders with only
 
 **Serializers** live in `app/serializers` with a `*Serializer` suffix (not `app/resources`/`*Resource`, which the vendored skills describe). Three kinds: entity (`UserSerializer`), page (one per action), and `SharedPropsSerializer`, injected globally. Never `as_json` — it bypasses type generation.
 
-**Two generated trees are checked in**, from Typelizer: `app/javascript/types/serializers/` and `app/javascript/routes/` (typed route helpers — use them over URL strings). Regenerate and commit; never hand-edit. `bin/ci` fails on drift, though GitHub CI does not currently check it. Same for `app/javascript/components/ui/` (shadcn) and `app/javascript/locales/` (i18n export).
+**Two generated trees are checked in**, from Typelizer: `app/javascript/types/serializers/` and `app/javascript/routes/` (typed route helpers — use them over URL strings). Regenerate and commit; never hand-edit — CI fails if any of them drift. Outside development the generator needs `TYPELIZER=true`, or explicit `typelize` annotations silently degrade to `unknown`. Same for `app/javascript/components/ui/` (shadcn) and `app/javascript/locales/` (i18n export).
 
 **Translations start in Rails.** `config/locales/en.yml` is the source; i18n-js exports it to `app/javascript/locales/en.json`, which i18next reads. Add a key there, not a string in a component. `flash`, `validations` and `user_mailer` are excluded from the export because the server resolves them. i18next is configured for Rails' `%{name}` placeholders, so one syntax works on both sides.
 

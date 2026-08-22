@@ -49,6 +49,9 @@ jobs:
       - name: Type check
         run: npm run check
 
+      - name: Audit npm packages for vulnerabilities
+        run: npm audit
+
   lint:
     runs-on: ubuntu-latest
     env:
@@ -112,3 +115,22 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost/rails_inertia_base_test
         run: bin/rails db:test:prepare spec
+
+      - name: Check generated types are fresh
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost/rails_inertia_base_test
+          TYPELIZER: "true"
+        run: |
+          bin/rails typelizer:generate:refresh
+          git diff --exit-code -- app/javascript/routes app/javascript/types/serializers
+          test -z "$(git ls-files --others --exclude-standard -- app/javascript/routes app/javascript/types/serializers)"
+
+      - name: Check exported translations are fresh
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost/rails_inertia_base_test
+        run: |
+          bundle exec i18n export
+          git diff --exit-code -- app/javascript/locales
+          test -z "$(git ls-files --others --exclude-standard -- app/javascript/locales)"
