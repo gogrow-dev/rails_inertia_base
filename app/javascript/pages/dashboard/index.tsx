@@ -1,18 +1,21 @@
 import { Head } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import { PlaceholderPattern } from "@/components/placeholder-pattern"
 import AppLayout from "@/layouts/app-layout"
 import { dashboard } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: "Dashboard",
-    href: dashboard.index().url,
-  },
-]
-
 export default function Dashboard() {
+  const { t } = useTranslation()
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t("pages.dashboard.title"),
+      href: dashboard.index().url,
+    },
+  ]
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={breadcrumbs[breadcrumbs.length - 1].title} />

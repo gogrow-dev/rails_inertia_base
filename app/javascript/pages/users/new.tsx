@@ -1,4 +1,5 @@
 import { Form, Head } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import TextLink from "@/components/text-link"
 import { Button } from "@/components/ui/button"
@@ -14,12 +15,14 @@ import AuthLayout from "@/layouts/auth-layout"
 import { sessions, users } from "@/routes"
 
 export default function Register() {
+  const { t } = useTranslation()
+
   return (
     <AuthLayout
-      title="Create an account"
-      description="Enter your details below to create your account"
+      title={t("pages.users.new.heading")}
+      description={t("pages.users.new.description")}
     >
-      <Head title="Register" />
+      <Head title={t("pages.users.new.title")} />
       <Form
         action={users.create()}
         resetOnSuccess={["password", "password_confirmation"]}
@@ -30,7 +33,7 @@ export default function Register() {
           <>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="name">Name</FieldLabel>
+                <FieldLabel htmlFor="name">{t("common.name")}</FieldLabel>
                 <Input
                   id="name"
                   type="text"
@@ -40,7 +43,7 @@ export default function Register() {
                   tabIndex={1}
                   autoComplete="name"
                   disabled={processing}
-                  placeholder="Full name"
+                  placeholder={t("common.full_name")}
                 />
                 <FieldError
                   errors={errors.name?.map((message) => ({ message }))}
@@ -48,7 +51,9 @@ export default function Register() {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="email">Email address</FieldLabel>
+                <FieldLabel htmlFor="email">
+                  {t("common.email_address")}
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -56,7 +61,7 @@ export default function Register() {
                   required
                   tabIndex={2}
                   autoComplete="email"
-                  placeholder="email@example.com"
+                  placeholder={t("common.email_placeholder")}
                 />
                 <FieldError
                   errors={errors.email?.map((message) => ({ message }))}
@@ -64,7 +69,9 @@ export default function Register() {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <FieldLabel htmlFor="password">
+                  {t("common.password")}
+                </FieldLabel>
                 <Input
                   id="password"
                   type="password"
@@ -72,7 +79,7 @@ export default function Register() {
                   required
                   tabIndex={3}
                   autoComplete="new-password"
-                  placeholder="Password"
+                  placeholder={t("common.password")}
                 />
                 <FieldError
                   errors={errors.password?.map((message) => ({ message }))}
@@ -81,7 +88,7 @@ export default function Register() {
 
               <Field>
                 <FieldLabel htmlFor="password_confirmation">
-                  Confirm password
+                  {t("common.confirm_password")}
                 </FieldLabel>
                 <Input
                   id="password_confirmation"
@@ -90,7 +97,7 @@ export default function Register() {
                   required
                   tabIndex={4}
                   autoComplete="new-password"
-                  placeholder="Confirm password"
+                  placeholder={t("common.confirm_password")}
                 />
                 <FieldError
                   errors={errors.password_confirmation?.map((message) => ({
@@ -101,14 +108,14 @@ export default function Register() {
 
               <Button type="submit" className="mt-2 w-full" tabIndex={5}>
                 {processing && <Spinner />}
-                Create account
+                {t("pages.users.new.submit")}
               </Button>
             </FieldGroup>
 
             <div className="text-muted-foreground text-center text-sm">
-              Already have an account?{" "}
+              {t("pages.users.new.have_account")}{" "}
               <TextLink href={sessions.new()} tabIndex={6}>
-                Log in
+                {t("common.log_in")}
               </TextLink>
             </div>
           </>

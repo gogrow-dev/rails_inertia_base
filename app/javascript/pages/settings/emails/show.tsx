@@ -1,5 +1,6 @@
 import { Transition } from "@headlessui/react"
 import { Form, Head, Link, usePage } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import HeadingSmall from "@/components/heading-small"
 import { Button } from "@/components/ui/button"
@@ -15,14 +16,16 @@ import SettingsLayout from "@/layouts/settings/layout"
 import { identityEmailVerifications, settingsEmails } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: "Email settings",
-    href: settingsEmails.show().url,
-  },
-]
-
 export default function Email() {
+  const { t } = useTranslation()
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t("pages.settings.email.title"),
+      href: settingsEmails.show().url,
+    },
+  ]
+
   const { auth } = usePage().props
 
   return (
@@ -32,8 +35,8 @@ export default function Email() {
       <SettingsLayout>
         <div className="space-y-6">
           <HeadingSmall
-            title="Update email"
-            description="Update your email address and verify it"
+            title={t("pages.settings.email.heading")}
+            description={t("pages.settings.email.description")}
           />
 
           <Form
@@ -49,7 +52,9 @@ export default function Email() {
               <>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel htmlFor="email">Email address</FieldLabel>
+                    <FieldLabel htmlFor="email">
+                      {t("common.email_address")}
+                    </FieldLabel>
 
                     <Input
                       id="email"
@@ -58,7 +63,7 @@ export default function Email() {
                       defaultValue={auth.user.email}
                       required
                       autoComplete="username"
-                      placeholder="Email address"
+                      placeholder={t("common.email_address")}
                     />
 
                     <FieldError
@@ -69,13 +74,13 @@ export default function Email() {
                   {!auth.user.verified && (
                     <div>
                       <p className="text-muted-foreground -mt-4 text-sm">
-                        Your email address is unverified.{" "}
+                        {t("pages.settings.email.unverified")}{" "}
                         <Link
                           href={identityEmailVerifications.create()}
                           as="button"
                           className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                         >
-                          Click here to resend the verification email.
+                          {t("pages.settings.email.resend")}
                         </Link>
                       </p>
                     </div>
@@ -83,7 +88,7 @@ export default function Email() {
 
                   <Field>
                     <FieldLabel htmlFor="password_challenge">
-                      Current password
+                      {t("common.current_password")}
                     </FieldLabel>
 
                     <Input
@@ -91,7 +96,7 @@ export default function Email() {
                       name="password_challenge"
                       type="password"
                       autoComplete="current-password"
-                      placeholder="Current password"
+                      placeholder={t("common.current_password")}
                     />
 
                     <FieldError
@@ -103,7 +108,7 @@ export default function Email() {
                 </FieldGroup>
 
                 <div className="flex items-center gap-4">
-                  <Button disabled={processing}>Save</Button>
+                  <Button disabled={processing}>{t("common.save")}</Button>
 
                   <Transition
                     show={recentlySuccessful}
@@ -112,7 +117,9 @@ export default function Email() {
                     leave="transition ease-in-out"
                     leaveTo="opacity-0"
                   >
-                    <p className="text-sm text-neutral-600">Saved</p>
+                    <p className="text-sm text-neutral-600">
+                      {t("common.saved")}
+                    </p>
                   </Transition>
                 </div>
               </>

@@ -1,15 +1,17 @@
 import { Head, Link, usePage } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import AppLogoIcon from "@/components/app-logo-icon"
 import { dashboard, sessions } from "@/routes"
 
 export default function Welcome() {
+  const { t } = useTranslation()
   const page = usePage()
   const { auth } = page.props
 
   return (
     <>
-      <Head title="Welcome">
+      <Head title={t("pages.home.title")}>
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
           href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600"
@@ -25,7 +27,7 @@ export default function Welcome() {
                 href={dashboard.index()}
                 className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
               >
-                Dashboard
+                {t("pages.home.dashboard")}
               </Link>
             ) : (
               <>
@@ -33,7 +35,7 @@ export default function Welcome() {
                   href={sessions.new()}
                   className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
                 >
-                  Log in
+                  {t("common.log_in")}
                 </Link>
               </>
             )}
@@ -47,27 +49,27 @@ export default function Welcome() {
                 {import.meta.env.VITE_APP_NAME ?? "React Starter Kit"}
               </h1>
               <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                Rails + Inertia.js + React + shadcn/ui
+                {t("pages.home.tagline")}
                 <br />
-                Here are some resources to begin:
+                {t("pages.home.resources_intro")}
               </p>
 
               <ul className="mb-4 flex flex-col lg:mb-6">
                 {[
                   {
-                    text: "Inertia Rails Docs",
+                    text: t("pages.home.resources.inertia_rails"),
                     href: "https://inertia-rails.dev",
                   },
                   {
-                    text: "shadcn/ui Components",
+                    text: t("pages.home.resources.shadcn"),
                     href: "https://ui.shadcn.com",
                   },
                   {
-                    text: "React Docs",
+                    text: t("pages.home.resources.react"),
                     href: "https://react.dev",
                   },
                   {
-                    text: "Rails Guides",
+                    text: t("pages.home.resources.rails"),
                     href: "https://guides.rubyonrails.org",
                   },
                 ].map((resource, index) => (
@@ -83,7 +85,7 @@ export default function Welcome() {
                     className="inline-block rounded-sm border border-black bg-[#1b1b18] px-5 py-1.5 text-sm leading-normal text-white hover:border-black hover:bg-black dark:border-[#eeeeec] dark:bg-[#eeeeec] dark:text-[#1C1C1A] dark:hover:border-white dark:hover:bg-white"
                     rel="noreferrer"
                   >
-                    Learn More
+                    {t("pages.home.learn_more")}
                   </a>
                 </li>
               </ul>

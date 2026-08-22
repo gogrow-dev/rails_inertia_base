@@ -1,4 +1,5 @@
 import { Form, Head } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -18,12 +19,14 @@ interface ResetPasswordProps {
 }
 
 export default function ResetPassword({ sid, email }: ResetPasswordProps) {
+  const { t } = useTranslation()
+
   return (
     <AuthLayout
-      title="Reset password"
-      description="Please enter your new password below"
+      title={t("pages.password_resets.edit.title")}
+      description={t("pages.password_resets.edit.description")}
     >
-      <Head title="Reset password" />
+      <Head title={t("pages.password_resets.edit.title")} />
       <Form
         action={identityPasswordResets.update()}
         transform={(data) => ({ ...data, sid, email })}
@@ -32,7 +35,9 @@ export default function ResetPassword({ sid, email }: ResetPasswordProps) {
         {({ processing, errors }) => (
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email">
+                {t("pages.password_resets.edit.email")}
+              </FieldLabel>
               <Input
                 id="email"
                 type="email"
@@ -47,14 +52,14 @@ export default function ResetPassword({ sid, email }: ResetPasswordProps) {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <FieldLabel htmlFor="password">{t("common.password")}</FieldLabel>
               <Input
                 id="password"
                 type="password"
                 name="password"
                 autoComplete="new-password"
                 autoFocus
-                placeholder="Password"
+                placeholder={t("common.password")}
               />
               <FieldError
                 errors={errors.password?.map((message) => ({ message }))}
@@ -63,14 +68,14 @@ export default function ResetPassword({ sid, email }: ResetPasswordProps) {
 
             <Field>
               <FieldLabel htmlFor="password_confirmation">
-                Confirm password
+                {t("common.confirm_password")}
               </FieldLabel>
               <Input
                 id="password_confirmation"
                 type="password"
                 name="password_confirmation"
                 autoComplete="new-password"
-                placeholder="Confirm password"
+                placeholder={t("common.confirm_password")}
               />
               <FieldError
                 errors={errors.password_confirmation?.map((message) => ({
@@ -81,7 +86,7 @@ export default function ResetPassword({ sid, email }: ResetPasswordProps) {
 
             <Button type="submit" className="mt-4 w-full" disabled={processing}>
               {processing && <Spinner />}
-              Reset password
+              {t("pages.password_resets.edit.submit")}
             </Button>
           </FieldGroup>
         )}

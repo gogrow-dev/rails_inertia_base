@@ -13,16 +13,16 @@ class SessionsController < InertiaController
       @session = user.sessions.create!
       cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
 
-      redirect_to dashboard_path, notice: "Signed in successfully"
+      redirect_to dashboard_path, notice: t("flash.signed_in")
     else
-      redirect_to sign_in_path, alert: "That email or password is incorrect"
+      redirect_to sign_in_path, alert: t("flash.incorrect_credentials")
     end
   end
 
   def destroy
     @session.destroy!
     Current.session = nil
-    redirect_to settings_sessions_path, notice: "That session has been logged out", inertia: { clear_history: true }
+    redirect_to settings_sessions_path, notice: t("flash.session_logged_out"), inertia: { clear_history: true }
   end
 
   private

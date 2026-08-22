@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import HeadingSmall from "@/components/heading-small"
 import { Badge } from "@/components/ui/badge"
@@ -8,18 +9,20 @@ import SettingsLayout from "@/layouts/settings/layout"
 import { sessions as sessionsRoutes, settingsSessions } from "@/routes"
 import type { BreadcrumbItem, Session } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: "Sessions",
-    href: settingsSessions.index().url,
-  },
-]
-
 interface SessionsProps {
   sessions: Session[]
 }
 
 export default function Sessions({ sessions }: SessionsProps) {
+  const { t } = useTranslation()
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t("pages.settings.sessions.title"),
+      href: settingsSessions.index().url,
+    },
+  ]
+
   const { auth } = usePage().props
 
   return (
@@ -29,8 +32,8 @@ export default function Sessions({ sessions }: SessionsProps) {
       <SettingsLayout>
         <div className="space-y-6">
           <HeadingSmall
-            title="Sessions"
-            description="Manage your active sessions across devices"
+            title={t("pages.settings.sessions.title")}
+            description={t("pages.settings.sessions.description")}
           />
 
           <div className="space-y-4">
@@ -45,16 +48,19 @@ export default function Sessions({ sessions }: SessionsProps) {
                       {session.user_agent}
                       {session.id === auth.session.id && (
                         <Badge variant="secondary" className="ml-2">
-                          Current
+                          {t("pages.settings.sessions.current")}
                         </Badge>
                       )}
                     </p>
                     <p className="text-muted-foreground text-sm">
-                      IP: {session.ip_address}
+                      {t("pages.settings.sessions.ip", {
+                        address: session.ip_address,
+                      })}
                     </p>
                     <p className="text-muted-foreground text-sm">
-                      Active since:{" "}
-                      {new Date(session.created_at).toLocaleString()}
+                      {t("pages.settings.sessions.active_since", {
+                        time: new Date(session.created_at).toLocaleString(),
+                      })}
                     </p>
                   </div>
                   {session.id !== auth.session.id && (
@@ -63,7 +69,7 @@ export default function Sessions({ sessions }: SessionsProps) {
                         href={sessionsRoutes.destroy(session.id)}
                         as="button"
                       >
-                        Log out
+                        {t("pages.settings.sessions.log_out")}
                       </Link>
                     </Button>
                   )}

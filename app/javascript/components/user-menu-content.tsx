@@ -1,5 +1,6 @@
 import { Link, router } from "@inertiajs/react"
 import { LogOut, Settings } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import {
   DropdownMenuGroup,
@@ -22,6 +23,7 @@ interface UserMenuContentProps {
 }
 
 export function UserMenuContent({ auth }: UserMenuContentProps) {
+  const { t } = useTranslation()
   const { session, user } = auth
   const cleanup = useMobileNavigation()
 
@@ -48,7 +50,7 @@ export function UserMenuContent({ auth }: UserMenuContentProps) {
             onClick={cleanup}
           >
             <Settings className="mr-2" />
-            Settings
+            {t("common.settings")}
           </Link>
         </DropdownMenuItem>
       </DropdownMenuGroup>
@@ -61,7 +63,7 @@ export function UserMenuContent({ auth }: UserMenuContentProps) {
           onClick={handleLogout}
         >
           <LogOut className="mr-2" />
-          Log out
+          {t("common.log_out")}
         </Link>
       </DropdownMenuItem>
     </>

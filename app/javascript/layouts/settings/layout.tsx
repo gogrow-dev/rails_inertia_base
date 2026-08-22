@@ -1,5 +1,6 @@
 import { Link, usePage } from "@inertiajs/react"
 import type { PropsWithChildren } from "react"
+import { useTranslation } from "react-i18next"
 
 import Heading from "@/components/heading"
 import { Button } from "@/components/ui/button"
@@ -14,42 +15,43 @@ import {
 } from "@/routes"
 import type { NavItem } from "@/types"
 
-const sidebarNavItems: NavItem[] = [
-  {
-    title: "Profile",
-    href: settingsProfiles.show().url,
-    icon: null,
-  },
-  {
-    title: "Email",
-    href: settingsEmails.show().url,
-    icon: null,
-  },
-  {
-    title: "Password",
-    href: settingsPasswords.show().url,
-    icon: null,
-  },
-  {
-    title: "Sessions",
-    href: settingsSessions.index().url,
-    icon: null,
-  },
-  {
-    title: "Appearance",
-    href: settingsAppearance().url,
-    icon: null,
-  },
-]
-
 export default function SettingsLayout({ children }: PropsWithChildren) {
+  const { t } = useTranslation()
   const { url } = usePage()
+
+  const sidebarNavItems: NavItem[] = [
+    {
+      title: t("nav.settings.profile"),
+      href: settingsProfiles.show().url,
+      icon: null,
+    },
+    {
+      title: t("nav.settings.email"),
+      href: settingsEmails.show().url,
+      icon: null,
+    },
+    {
+      title: t("nav.settings.password"),
+      href: settingsPasswords.show().url,
+      icon: null,
+    },
+    {
+      title: t("nav.settings.sessions"),
+      href: settingsSessions.index().url,
+      icon: null,
+    },
+    {
+      title: t("nav.settings.appearance"),
+      href: settingsAppearance().url,
+      icon: null,
+    },
+  ]
 
   return (
     <div className="px-4 py-6">
       <Heading
-        title="Settings"
-        description="Manage your profile and account settings"
+        title={t("components.settings_layout.title")}
+        description={t("components.settings_layout.description")}
       />
 
       <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
