@@ -74,7 +74,13 @@ RUN --mount=type=secret,id=VITE_SENTRY_DSN \
 
 # Build SSR bundle when SSR_ENABLED=true, then discard node_modules
 ARG SSR_ENABLED
-RUN if [ "$SSR_ENABLED" = "true" ]; then npx vite build --ssr; fi && \
+RUN --mount=type=secret,id=VITE_SENTRY_DSN \
+    --mount=type=secret,id=VITE_APP_NAME \
+    if [ "$SSR_ENABLED" = "true" ]; then \
+      VITE_SENTRY_DSN=$(cat /run/secrets/VITE_SENTRY_DSN) \
+      VITE_APP_NAME=$(cat /run/secrets/VITE_APP_NAME) \
+      npx vite build --ssr; \
+    fi && \
     rm -rf node_modules
 
 # Branch: SSR enabled — ship the JS runtime alongside the app
