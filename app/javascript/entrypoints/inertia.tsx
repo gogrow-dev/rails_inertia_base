@@ -6,7 +6,7 @@ import PersistentLayout from "@/layouts/persistent-layout"
 import "../lib/sentry"
 import "../lib/i18next"
 
-const appName = import.meta.env.VITE_APP_NAME ?? "React Starter Kit"
+const appName = import.meta.env.VITE_APP_NAME ?? "Rails Inertia Base"
 
 void createInertiaApp({
   title: (title) => (title ? `${title} - ${appName}` : appName),
