@@ -1,5 +1,6 @@
 import { Link, usePage } from "@inertiajs/react"
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { Icon } from "@/components/icon"
@@ -38,27 +39,6 @@ import type { BreadcrumbItem, NavItem } from "@/types"
 import AppLogo from "./app-logo"
 import AppLogoIcon from "./app-logo-icon"
 
-const mainNavItems: NavItem[] = [
-  {
-    title: "Dashboard",
-    href: dashboard.index().url,
-    icon: LayoutGrid,
-  },
-]
-
-const rightNavItems: NavItem[] = [
-  {
-    title: "Repository",
-    href: "https://github.com/inertia-rails/react-starter-kit",
-    icon: Folder,
-  },
-  {
-    title: "Documentation",
-    href: "https://inertia-rails.dev",
-    icon: BookOpen,
-  },
-]
-
 const activeItemStyles =
   "text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
 
@@ -67,6 +47,29 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
+  const { t } = useTranslation()
+
+  const mainNavItems: NavItem[] = [
+    {
+      title: t("nav.dashboard"),
+      href: dashboard.index().url,
+      icon: LayoutGrid,
+    },
+  ]
+
+  const rightNavItems: NavItem[] = [
+    {
+      title: t("nav.repository"),
+      href: "https://github.com/inertia-rails/react-starter-kit",
+      icon: Folder,
+    },
+    {
+      title: t("nav.documentation"),
+      href: "https://inertia-rails.dev",
+      icon: BookOpen,
+    },
+  ]
+
   const page = usePage()
   const { auth } = page.props
   const getInitials = useInitials()
@@ -90,7 +93,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                 side="left"
                 className="bg-sidebar flex h-full w-64 flex-col items-stretch justify-between"
               >
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetTitle className="sr-only">{t("nav.menu")}</SheetTitle>
                 <SheetHeader className="flex justify-start text-left">
                   <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
                 </SheetHeader>

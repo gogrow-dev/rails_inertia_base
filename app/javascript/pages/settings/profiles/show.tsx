@@ -1,5 +1,6 @@
 import { Transition } from "@headlessui/react"
 import { Form, Head, usePage } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import DeleteUser from "@/components/delete-user"
 import HeadingSmall from "@/components/heading-small"
@@ -11,14 +12,16 @@ import SettingsLayout from "@/layouts/settings/layout"
 import { settingsProfiles } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: "Profile settings",
-    href: settingsProfiles.show().url,
-  },
-]
-
 export default function Profile() {
+  const { t } = useTranslation()
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t("pages.settings.profile.title"),
+      href: settingsProfiles.show().url,
+    },
+  ]
+
   const { auth } = usePage().props
 
   return (
@@ -28,8 +31,8 @@ export default function Profile() {
       <SettingsLayout>
         <div className="space-y-6">
           <HeadingSmall
-            title="Profile information"
-            description="Update your name"
+            title={t("pages.settings.profile.heading")}
+            description={t("pages.settings.profile.description")}
           />
 
           <Form
@@ -42,7 +45,7 @@ export default function Profile() {
             {({ errors, processing, recentlySuccessful }) => (
               <>
                 <Field>
-                  <FieldLabel htmlFor="name">Name</FieldLabel>
+                  <FieldLabel htmlFor="name">{t("common.name")}</FieldLabel>
 
                   <Input
                     id="name"
@@ -50,7 +53,7 @@ export default function Profile() {
                     defaultValue={auth.user.name}
                     required
                     autoComplete="name"
-                    placeholder="Full name"
+                    placeholder={t("common.full_name")}
                   />
 
                   <FieldError
@@ -59,7 +62,7 @@ export default function Profile() {
                 </Field>
 
                 <div className="flex items-center gap-4">
-                  <Button disabled={processing}>Save</Button>
+                  <Button disabled={processing}>{t("common.save")}</Button>
 
                   <Transition
                     show={recentlySuccessful}
@@ -68,7 +71,9 @@ export default function Profile() {
                     leave="transition ease-in-out"
                     leaveTo="opacity-0"
                   >
-                    <p className="text-sm text-neutral-600">Saved</p>
+                    <p className="text-sm text-neutral-600">
+                      {t("common.saved")}
+                    </p>
                   </Transition>
                 </div>
               </>

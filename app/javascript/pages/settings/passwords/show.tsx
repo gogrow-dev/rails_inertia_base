@@ -1,5 +1,6 @@
 import { Transition } from "@headlessui/react"
 import { Form, Head } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import HeadingSmall from "@/components/heading-small"
 import { Button } from "@/components/ui/button"
@@ -15,14 +16,16 @@ import SettingsLayout from "@/layouts/settings/layout"
 import { settingsPasswords } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: "Password settings",
-    href: settingsPasswords.show().url,
-  },
-]
-
 export default function Password() {
+  const { t } = useTranslation()
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t("pages.settings.password.title"),
+      href: settingsPasswords.show().url,
+    },
+  ]
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={breadcrumbs[breadcrumbs.length - 1].title} />
@@ -30,8 +33,8 @@ export default function Password() {
       <SettingsLayout>
         <div className="space-y-6">
           <HeadingSmall
-            title="Update password"
-            description="Ensure your account is using a long, random password to stay secure"
+            title={t("pages.settings.password.heading")}
+            description={t("pages.settings.password.description")}
           />
 
           <Form
@@ -48,7 +51,7 @@ export default function Password() {
                 <FieldGroup>
                   <Field>
                     <FieldLabel htmlFor="password_challenge">
-                      Current password
+                      {t("common.current_password")}
                     </FieldLabel>
 
                     <Input
@@ -56,7 +59,7 @@ export default function Password() {
                       name="password_challenge"
                       type="password"
                       autoComplete="current-password"
-                      placeholder="Current password"
+                      placeholder={t("common.current_password")}
                     />
 
                     <FieldError
@@ -67,14 +70,16 @@ export default function Password() {
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="password">New password</FieldLabel>
+                    <FieldLabel htmlFor="password">
+                      {t("pages.settings.password.new_password")}
+                    </FieldLabel>
 
                     <Input
                       id="password"
                       name="password"
                       type="password"
                       autoComplete="new-password"
-                      placeholder="New password"
+                      placeholder={t("pages.settings.password.new_password")}
                     />
 
                     <FieldError
@@ -84,7 +89,7 @@ export default function Password() {
 
                   <Field>
                     <FieldLabel htmlFor="password_confirmation">
-                      Confirm password
+                      {t("common.confirm_password")}
                     </FieldLabel>
 
                     <Input
@@ -92,7 +97,7 @@ export default function Password() {
                       name="password_confirmation"
                       type="password"
                       autoComplete="new-password"
-                      placeholder="Confirm password"
+                      placeholder={t("common.confirm_password")}
                     />
 
                     <FieldError
@@ -104,7 +109,9 @@ export default function Password() {
                 </FieldGroup>
 
                 <div className="flex items-center gap-4">
-                  <Button disabled={processing}>Save password</Button>
+                  <Button disabled={processing}>
+                    {t("pages.settings.password.submit")}
+                  </Button>
 
                   <Transition
                     show={recentlySuccessful}
@@ -113,7 +120,9 @@ export default function Password() {
                     leave="transition ease-in-out"
                     leaveTo="opacity-0"
                   >
-                    <p className="text-sm text-neutral-600">Saved</p>
+                    <p className="text-sm text-neutral-600">
+                      {t("common.saved")}
+                    </p>
                   </Transition>
                 </div>
               </>

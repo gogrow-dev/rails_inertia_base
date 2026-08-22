@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import AppearanceTabs from "@/components/appearance-tabs"
 import HeadingSmall from "@/components/heading-small"
@@ -7,14 +8,16 @@ import SettingsLayout from "@/layouts/settings/layout"
 import { settingsAppearance } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: "Appearance settings",
-    href: settingsAppearance().url,
-  },
-]
-
 export default function Appearance() {
+  const { t } = useTranslation()
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t("pages.settings.appearance.title"),
+      href: settingsAppearance().url,
+    },
+  ]
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={breadcrumbs[breadcrumbs.length - 1].title} />
@@ -22,8 +25,8 @@ export default function Appearance() {
       <SettingsLayout>
         <div className="space-y-6">
           <HeadingSmall
-            title="Appearance settings"
-            description="Update your account's appearance settings"
+            title={t("pages.settings.appearance.title")}
+            description={t("pages.settings.appearance.description")}
           />
           <AppearanceTabs />
         </div>

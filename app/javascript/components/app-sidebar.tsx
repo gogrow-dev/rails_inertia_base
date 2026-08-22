@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react"
 import { BookOpen, Folder, LayoutGrid } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { NavFooter } from "@/components/nav-footer"
 import { NavMain } from "@/components/nav-main"
@@ -18,28 +19,30 @@ import type { NavItem } from "@/types"
 
 import AppLogo from "./app-logo"
 
-const mainNavItems: NavItem[] = [
-  {
-    title: "Dashboard",
-    href: dashboard.index().url,
-    icon: LayoutGrid,
-  },
-]
-
-const footerNavItems: NavItem[] = [
-  {
-    title: "Repository",
-    href: "https://github.com/inertia-rails/react-starter-kit",
-    icon: Folder,
-  },
-  {
-    title: "Documentation",
-    href: "https://inertia-rails.dev",
-    icon: BookOpen,
-  },
-]
-
 export function AppSidebar() {
+  const { t } = useTranslation()
+
+  const mainNavItems: NavItem[] = [
+    {
+      title: t("nav.dashboard"),
+      href: dashboard.index().url,
+      icon: LayoutGrid,
+    },
+  ]
+
+  const footerNavItems: NavItem[] = [
+    {
+      title: t("nav.repository"),
+      href: "https://github.com/inertia-rails/react-starter-kit",
+      icon: Folder,
+    },
+    {
+      title: t("nav.documentation"),
+      href: "https://inertia-rails.dev",
+      icon: BookOpen,
+    },
+  ]
+
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>

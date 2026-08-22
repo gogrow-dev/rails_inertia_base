@@ -27,7 +27,7 @@ class Settings::EmailsController < InertiaController
   def redirect_to_success
     if @user.email_previously_changed?
       resend_email_verification
-      redirect_to settings_email_path, notice: "Your email has been changed"
+      redirect_to settings_email_path, notice: t("flash.email_changed")
     else
       redirect_to settings_email_path
     end

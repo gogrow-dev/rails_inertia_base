@@ -1,4 +1,5 @@
 import { Form, Head } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 
 import TextLink from "@/components/text-link"
 import { Button } from "@/components/ui/button"
@@ -9,26 +10,30 @@ import AuthLayout from "@/layouts/auth-layout"
 import { identityPasswordResets, sessions } from "@/routes"
 
 export default function ForgotPassword() {
+  const { t } = useTranslation()
+
   return (
     <AuthLayout
-      title="Forgot password"
-      description="Enter your email to receive a password reset link"
+      title={t("pages.password_resets.new.title")}
+      description={t("pages.password_resets.new.description")}
     >
-      <Head title="Forgot password" />
+      <Head title={t("pages.password_resets.new.title")} />
 
       <div className="space-y-6">
         <Form action={identityPasswordResets.create()}>
           {({ processing, errors }) => (
             <>
               <Field>
-                <FieldLabel htmlFor="email">Email address</FieldLabel>
+                <FieldLabel htmlFor="email">
+                  {t("common.email_address")}
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
                   name="email"
                   autoComplete="off"
                   autoFocus
-                  placeholder="email@example.com"
+                  placeholder={t("common.email_placeholder")}
                 />
                 <FieldError
                   errors={errors.email?.map((message) => ({ message }))}
@@ -38,15 +43,17 @@ export default function ForgotPassword() {
               <div className="my-6 flex items-center justify-start">
                 <Button className="w-full" disabled={processing}>
                   {processing && <Spinner />}
-                  Email password reset link
+                  {t("pages.password_resets.new.submit")}
                 </Button>
               </div>
             </>
           )}
         </Form>
         <div className="text-muted-foreground space-x-1 text-center text-sm">
-          <span>Or, return to</span>
-          <TextLink href={sessions.new()}>log in</TextLink>
+          <span>{t("pages.password_resets.new.return_to")}</span>
+          <TextLink href={sessions.new()}>
+            {t("pages.password_resets.new.log_in")}
+          </TextLink>
         </div>
       </div>
     </AuthLayout>
