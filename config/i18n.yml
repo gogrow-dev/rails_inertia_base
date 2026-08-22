@@ -1,0 +1,14 @@
+---
+translations:
+  - file: "app/javascript/locales/:locale.json"
+    patterns:
+      - "*"
+      - "!*.activerecord.*"
+      - "!*.faker.*"
+      - "!*.helpers.*"
+      - "!*.errors.*"
+      - "!*.number.*"
+      - "!*.date.*"
+      - "!*.time.*"
+      - "!*.support.*"
+      - "!*.datetime.*"

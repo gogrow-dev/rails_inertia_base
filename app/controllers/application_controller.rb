@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :set_current_request_details
   before_action :authenticate
   before_action :set_sentry_context
+  around_action :switch_locale
 
   private
 
@@ -23,6 +24,11 @@ class ApplicationController < ActionController::Base
 
   def perform_authentication
     Current.session ||= Session.find_by_id(cookies.signed[:session_token])
+  end
+
+  def switch_locale(&action)
+    locale = params[:locale] || I18n.default_locale
+    I18n.with_locale(locale, &action)
   end
 
   def set_current_request_details

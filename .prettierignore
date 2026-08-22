@@ -3,3 +3,4 @@ coverage
 app/javascript/components/ui
 app/javascript/routes
 app/javascript/types/serializers
+app/javascript/locales
