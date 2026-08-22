@@ -54,6 +54,9 @@ gem "authentication-zero"
 # Brings Rails named routes to javascript
 gem "typelizer"
 
+# Export Rails i18n translations to JSON for the frontend
+gem "i18n-js", "~> 4.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -86,6 +89,7 @@ group :development do
 
   # Use letter_opener to preview emails in the browser in development [https://github.com/ryanb/letter_opener]
   gem "letter_opener"
+  gem "listen", "~> 3.10"
 
   gem "annotaterb", require: false
 end
