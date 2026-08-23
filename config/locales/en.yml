@@ -49,8 +49,6 @@ en:
   nav:
     platform: "Platform"
     dashboard: "Dashboard"
-    repository: "Repository"
-    documentation: "Documentation"
     menu: "Navigation Menu"
     settings:
       profile: "Profile"
