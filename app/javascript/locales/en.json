@@ -38,10 +38,8 @@
     },
     "nav": {
       "dashboard": "Dashboard",
-      "documentation": "Documentation",
       "menu": "Navigation Menu",
       "platform": "Platform",
-      "repository": "Repository",
       "settings": {
         "appearance": "Appearance",
         "email": "Email",
