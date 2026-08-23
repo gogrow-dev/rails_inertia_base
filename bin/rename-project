@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Renames this template to a real project. Run once, from the repo root:
+#
+#   bin/rename-project acme_crm            # display name defaults to "Acme Crm"
+#   bin/rename-project acme_crm "Acme CRM"
+#
+# Rewrites the four forms the old name appears in — snake_case (databases,
+# Kamal service and image, package name, worktree DB prefix), CamelCase (the
+# Rails module and the PWA manifest), the display name, and the VITE_APP_NAME
+# fallbacks — then drops the inherited credentials so the project generates
+# its own.
+
+require "active_support/all"
+
+OLD = { snake: "rails_inertia_base", camel: "RailsInertiaBase", display: "Rails Inertia Base" }.freeze
+
+def abort_with(message)
+  warn message
+  exit 1
+end
+
+slug = ARGV[0].to_s
+abort_with("usage: bin/rename-project <snake_case_name> [\"Display Name\"]") if slug.empty?
+unless slug.match?(/\A[a-z][a-z0-9_]*\z/)
+  abort_with("'#{slug}' must be snake_case: lowercase, digits and underscores, starting with a letter")
+end
+abort_with("that is already the name") if slug == OLD[:snake]
+
+new = { snake: slug, camel: slug.camelize, display: ARGV[1].presence || slug.titleize }
+
+# Tracked files only, so nothing in node_modules or tmp is touched.
+files = `git ls-files -z`.split("\0").reject { |f| f == "bin/rename-project" }
+changed = []
+
+files.each do |file|
+  next unless File.file?(file)
+
+  original = File.read(file)
+  next if original.encoding == Encoding::BINARY
+
+  updated = original
+    .gsub(OLD[:camel], new[:camel])
+    .gsub(OLD[:snake], new[:snake])
+    .gsub(OLD[:display], new[:display])
+
+  next if updated == original
+
+  File.write(file, updated)
+  changed << file
+rescue ArgumentError
+  next # not text, skip
+end
+
+# The upstream reference in AGENTS.md and README is provenance, not our name.
+credentials = "config/credentials.yml.enc"
+File.delete(credentials) if File.exist?(credentials)
+File.delete("config/master.key") if File.exist?("config/master.key")
+
+puts "Renamed to #{new[:snake]} (#{new[:camel]}, \"#{new[:display]}\") across #{changed.size} files:"
+changed.sort.each { |f| puts "  #{f}" }
+puts <<~NEXT
+
+  Still to do by hand:
+    bin/rails credentials:edit          generate this project's own master key
+    bin/rails db:prepare                the old databases keep the old names
+    config/deploy.yml                   registry, server and build cache image
+    .env.example                        Sentry DSNs, Mission Control credentials
+    app/javascript/components/app-{header,sidebar}.tsx   the Repository link
+
+  Then delete bin/rename-project — it only runs once.
+NEXT
