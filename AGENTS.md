@@ -75,7 +75,7 @@ Two or three sentences on what this does and why.
 - One bullet per meaningful change
 ```
 
-Plain English, active voice, no throat-clearing or filler adjectives. `gh pr create --body` bypasses `.github/pull_request_template.md`, so write the body out in full.
+Plain English, active voice, no throat-clearing or filler adjectives. One line per paragraph — don't hard-wrap, the tools reading it wrap for you. Same for commit messages, where the body should be proportional to the change. `gh pr create --body` bypasses `.github/pull_request_template.md`, so write the body out in full.
 
 ## Skills
 

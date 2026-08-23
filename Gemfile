@@ -78,8 +78,6 @@ group :development, :test do
 
   gem "faker"
 
-  # Loads .env, which carries DATABASE_SUFFIX for per-worktree DB isolation
-  # and RAILS_SENTRY_DSN for testing Sentry locally
   gem "dotenv-rails"
 end
 

@@ -6,11 +6,10 @@
 #   bin/rename-project acme_crm            # display name defaults to "Acme Crm"
 #   bin/rename-project acme_crm "Acme CRM"
 #
-# Rewrites the four forms the old name appears in — snake_case (databases,
-# Kamal service and image, package name, worktree DB prefix), CamelCase (the
-# Rails module and the PWA manifest), the display name, and the VITE_APP_NAME
-# fallbacks — then drops the inherited credentials so the project generates
-# its own.
+# Rewrites the four forms the old name appears in: snake_case (databases, Kamal
+# service and image, package name, worktree DB prefix), CamelCase (the Rails
+# module and the PWA manifest), the display name, and the VITE_APP_NAME
+# fallbacks.
 
 require "active_support/all"
 
@@ -53,17 +52,12 @@ rescue ArgumentError
   next # not text, skip
 end
 
-# The upstream reference in AGENTS.md and README is provenance, not our name.
-credentials = "config/credentials.yml.enc"
-File.delete(credentials) if File.exist?(credentials)
-File.delete("config/master.key") if File.exist?("config/master.key")
-
 puts "Renamed to #{new[:snake]} (#{new[:camel]}, \"#{new[:display]}\") across #{changed.size} files:"
 changed.sort.each { |f| puts "  #{f}" }
 puts <<~NEXT
 
   Still to do by hand:
-    bin/rails credentials:edit          generate this project's own master key
+    bin/rails credentials:edit          this project has no credentials yet
     bin/rails db:prepare                the old databases keep the old names
     config/deploy.yml                   registry, server and build cache image
     .env.example                        Sentry DSNs, Mission Control credentials
