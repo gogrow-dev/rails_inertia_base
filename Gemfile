@@ -101,5 +101,5 @@ end
 gem "alba"
 gem "alba-inertia"
 
-gem "sentry-ruby", "~> 6.5"
-gem "sentry-rails", "~> 6.5"
+gem "sentry-ruby", "~> 7.0"
+gem "sentry-rails", "~> 7.0"
